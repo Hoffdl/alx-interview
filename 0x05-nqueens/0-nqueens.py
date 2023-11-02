@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/eniv python3
 """Placing N non-attacking queens on an NN chessboard."""
 import sys
 
@@ -6,73 +6,64 @@ import sys
 matrix = []  # global variables
 board = []  # global variables
 
-
-def result():
-    """ Prints result. """
-    for row in range(len(board)):
-        for col in range(len(board[row])):
-            if board[row][col] == 1:  # if a queen is met
-                matrix[row][1] = col  # matrix stores the column
-    return matrix
-
-
-def backtrack(r, n, col, posDiag, negDiag):
-    """ Recursive function """
-    global board
-    if r == n:  # end of row
-        print(result())  # print solution
+def backtrack(r, n, cols, pos, neg, board):
+    """
+    backtrack function to find solution
+    """
+    if r == n:
+        res = []
+        for l in range(len(board)):
+            for k in range(len(board[l])):
+                if board[l][k] == 1:
+                    res.append([l, k])
+        print(res)
         return
 
     for c in range(n):
-        if c in col or (r + c) in posDiag or (r - c) in negDiag:
+        if c in cols or (r + c) in pos or (r - c) in neg:
             continue
 
-        # adds the row combinations to the set
-        col.add(c)
-        posDiag.add(r + c)
-        negDiag.add(r - c)
+        cols.add(c)
+        pos.add(r + c)
+        neg.add(r - c)
         board[r][c] = 1
 
-        # the function moves to the next row and runs again
-        backtrack(r + 1, n, col, posDiag, negDiag)
+        backtrack(r+1, n, cols, pos, neg, board)
 
-        # in the event that a queen cant be placed in any colum,
-        # backtracking happens and the previous queen is moved
-        # hence the combinations of the previous queen need to be
-        # reset to 0
-        col.remove(c)
-        posDiag.remove(r + c)
-        negDiag.remove(r - c)
-        # board is updated to 0 to indicate that a queen
-        # is no longer in that position
+        cols.remove(c)
+        pos.remove(r + c)
+        neg.remove(r - c)
         board[r][c] = 0
 
 
-def solve_n_queens(n):
-    """ Solve N Queens """
-    col = set()
-    posDiag = set()
-    negDiag = set()
+def nqueens(n):
+    """
+    Solution to nqueens problem
+    Args:
+        n (int): number of queens. Must be >= 4
+    Return:
+        List of lists representing coordinates of each
+        queen for all possible solutions
+    """
+    cols = set()
+    pos_diag = set()
+    neg_diag = set()
+    board = [[0] * n for i in range(n)]
 
-    global matrix
-    global board
-    matrix = [[c + r for c in range(2)] for r in range(n)]
-    board = [[0 for i in range(n)] for i in range(n)]
-
-    # call backtrace to place our queens
-    backtrack(0, n, col, posDiag, negDiag)
+    backtrack(0, n, cols, pos_diag, neg_diag, board)
 
 
-if len(sys.argv) != 2:  # wrong number of arguements
-    print("Usage: nqueens N")
-    sys.exit(1)
-
-num = sys.argv[1]
-
-try:
-    num_int = int(num)
-except ValueError:  # N must be an int
-    print("N must be at least 4")
-    sys.exit(1)
-
-solve_n_queens(num_int)
+if __name__ == "__main__":
+    n = sys.argv
+    if len(n) != 2:
+        print("Usage: nqueens N")
+        sys.exit(1)
+    try:
+        nn = int(n[1])
+        if nn < 4:
+            print("N must be at least 4")
+            sys.exit(1)
+        nqueens(nn)
+    except ValueError:
+        print("N must be a number")
+        sys.exit(1)
