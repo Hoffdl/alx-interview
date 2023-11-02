@@ -1,4 +1,4 @@
-#!/usr/bin/eniv python3
+#!/usr/bin/env python3
 """Placing N non-attacking queens on an NN chessboard."""
 import sys
 
